@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Central vertical wellbore -->
+  <path d="M 32 24 L 32 54" stroke="#1e3a5f" stroke-width="8" stroke-linecap="round" />
+  
+  <!-- Network connections to offset wells -->
+  <path d="M 16 36 L 32 36" stroke="#1e3a5f" stroke-width="8" stroke-linecap="round" />
+  <path d="M 32 46 L 48 46" stroke="#1e3a5f" stroke-width="8" stroke-linecap="round" />
+  
+  <!-- Offset well nodes (institutional intelligence) -->
+  <circle cx="16" cy="36" r="6" fill="#1e3a5f" />
+  <circle cx="48" cy="46" r="6" fill="#1e3a5f" />
+  <circle cx="32" cy="54" r="6" fill="#1e3a5f" />
+  
+  <!-- Active wellhead (warm sandstone accent) -->
+  <circle cx="32" cy="14" r="10" fill="#b05e00" />
+  <!-- Technical hollow center -->
+  <circle cx="32" cy="14" r="3" fill="#ffffff" />
+</svg>
