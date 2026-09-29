@@ -64,12 +64,14 @@ export default function App() {
     const cleanup = telemetryService.subscribe(
       (row) => {
         if (!isLiveRef.current) return
+        // Skip loop_reset events which have no telemetry fields
+        if (row.event === 'loop_reset' || row.torque_knm == null || row.mud_weight_sg == null) return
         setActiveDepth(row.depth_m)
         setStreamRow(row)
         setStreamHistory(prev => [...prev.slice(-80), {
           depth: Math.round(row.depth_m),
-          torque: +row.torque_knm.toFixed(2),
-          mud: +row.mud_weight_sg.toFixed(3),
+          torque: +(row.torque_knm ?? 0).toFixed(2),
+          mud: +(row.mud_weight_sg ?? 1.15).toFixed(3),
         }])
 
         riskService.getRiskScore({
