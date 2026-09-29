@@ -1,40 +1,44 @@
 :root {
   /* surfaces */
-  --page:          #f4f2ee;
+  --page:          #f8f9fa;
   --surface:       #ffffff;
-  --surface-2:     #f8f7f4;
-  --surface-3:     #f0ede8;
+  --surface-2:     #f4f6f8;
+  --surface-3:     #e9ecef;
 
   /* borders */
-  --border:        #e0ddd8;
-  --border-strong: #c8c4bc;
-  --border-focus:  #1e3a5f;
+  --border:        #e5e7eb;
+  --border-strong: #d1d5db;
+  --border-focus:  #003366;
 
   /* text */
-  --text:          #1a1916;
-  --text-2:        #5c5850;
-  --text-3:        #9c9890;
+  --text:          #111827;
+  --text-2:        #4b5563;
+  --text-3:        #9ca3af;
 
   /* semantic — risk */
-  --risk-critical: #7f1d1d;
-  --risk-high:     #991b1b;
+  --risk-critical: #991b1b;
+  --risk-high:     #dc2626;
   --risk-bg:       #fef2f2;
   --risk-border:   #fecaca;
 
   /* semantic — warning */
-  --warn:          #b05e00;
-  --warn-bg:       #fff7ed;
-  --warn-border:   #fed7aa;
+  --warn:          #d97706;
+  --warn-bg:       #fffbeb;
+  --warn-border:   #fde68a;
 
   /* semantic — normal */
-  --ok:            #166534;
-  --ok-bg:         #f0fdf4;
-  --ok-border:     #bbf7d0;
+  --ok:            #059669;
+  --ok-bg:         #ecfdf5;
+  --ok-border:     #a7f3d0;
 
   /* semantic — active/live/information */
-  --info:          #1e3a5f;
-  --info-bg:       #eff6ff;
-  --info-border:   #bfdbfe;
+  --info:          #003366;
+  --info-bg:       #e0f2fe;
+  --info-border:   #bae6fd;
+  
+  /* Indian Oil Brand */
+  --iocl-navy:     #003366;
+  --iocl-saffron:  #f37021;
 
   /* chart lines */
   --chart-torque:  #b91c1c;
@@ -84,41 +88,43 @@ html, body, #root {
 
 /* ── left rail ── */
 .rail {
-  background: var(--surface);
-  border-right: 1px solid var(--border);
+  background: var(--iocl-navy);
+  border-right: 1px solid #002244;
+  color: #ffffff;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
 }
 
-.rail-header { padding: 16px; border-bottom: 1px solid var(--border); }
+.rail-header { padding: 16px; border-bottom: 1px solid #004080; }
 
 .product-wordmark {
   font-size: 10px;
   font-weight: 600;
   letter-spacing: .07em;
   text-transform: uppercase;
-  color: var(--text-3);
+  color: var(--iocl-saffron);
   margin-bottom: 14px;
 }
+.product-wordmark div:last-child { color: #8faac8 !important; }
 
 /* ── active well identity ── */
 .well-identity {
-  border: 1px solid var(--border);
+  border: 1px solid #004080;
   border-radius: var(--r-md);
-  background: var(--surface-2);
+  background: #002244;
   padding: 12px;
 }
 .well-id-label {
   font-family: var(--font-mono);
   font-size: 10px;
-  color: var(--text-3);
+  color: #8faac8;
   margin-bottom: 1px;
 }
 .well-name-heading {
   font-size: 15px;
   font-weight: 600;
-  color: var(--text);
+  color: #ffffff;
   margin-bottom: 8px;
 }
 .status-pill {
@@ -147,28 +153,28 @@ html, body, #root {
 .well-depth-block {
   margin-top: 10px;
   padding-top: 10px;
-  border-top: 1px solid var(--border);
+  border-top: 1px solid #004080;
 }
 .depth-micro-label {
   font-size: 10px;
-  color: var(--text-3);
+  color: #8faac8;
   margin-bottom: 2px;
 }
 .depth-display {
   font-family: var(--font-mono);
   font-size: 22px;
   font-weight: 700;
-  color: var(--text);
+  color: #ffffff;
   line-height: 1;
 }
-.depth-unit { font-size: 12px; font-weight: 400; color: var(--text-2); margin-left: 3px; }
+.depth-unit { font-size: 12px; font-weight: 400; color: #8faac8; margin-left: 3px; }
 .depth-formation {
   font-size: 11px;
-  color: var(--warn);
+  color: var(--iocl-saffron);
   font-weight: 500;
   margin-top: 4px;
 }
-.depth-fault { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+.depth-fault { font-size: 11px; color: #8faac8; margin-top: 1px; }
 
 /* ── navigation ── */
 .rail-nav { padding: 14px 12px; flex: 1; }
@@ -177,7 +183,7 @@ html, body, #root {
   font-weight: 600;
   letter-spacing: .07em;
   text-transform: uppercase;
-  color: var(--text-3);
+  color: #8faac8;
   padding: 0 6px;
   margin-bottom: 4px;
   margin-top: 16px;
@@ -189,22 +195,23 @@ html, body, #root {
   gap: 8px;
   padding: 6px 8px;
   border-radius: var(--r-sm);
-  color: var(--text-2);
+  color: #c4d6eb;
   font-size: 13px;
   cursor: pointer;
   border: 1px solid transparent;
   margin-bottom: 1px;
   transition: background .1s, color .1s;
 }
-.nav-item:hover { background: var(--surface-2); color: var(--text); }
+.nav-item:hover { background: #004080; color: #ffffff; }
 .nav-item.active {
-  background: var(--surface-2);
-  border-color: var(--border);
-  color: var(--text);
+  background: #002244;
+  border-color: #001122;
+  color: #ffffff;
   font-weight: 500;
+  border-left: 3px solid var(--iocl-saffron);
 }
-.nav-item i { font-size: 15px; color: var(--text-3); flex-shrink: 0; }
-.nav-item.active i { color: var(--text-2); }
+.nav-item i { font-size: 15px; color: #8faac8; flex-shrink: 0; }
+.nav-item.active i { color: var(--iocl-saffron); }
 .nav-badge {
   margin-left: auto;
   font-size: 10px;

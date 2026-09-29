@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, ResponsiveContainer } from 'recharts'
-import { telemetryService } from '../services/api'
+import { MOCK_INCIDENTS } from '../services/api'
 
 const ChartTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null
@@ -56,41 +56,62 @@ export default function TelemetryChart({ streamHistory }) {
       </div>
       <div className="chart-container">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={streamHistory} margin={{top:4,right:4,bottom:0,left:-24}}>
-            <CartesianGrid stroke="var(--border)" vertical={false} strokeDasharray="3 3"/>
+          <LineChart layout="vertical" data={streamHistory} margin={{top:20,right:20,bottom:20,left:0}}>
+            <CartesianGrid stroke="var(--border)" horizontal={true} vertical={false} strokeDasharray="3 3"/>
             <XAxis
-              dataKey="depth"
-              tick={axisStyle}
-              tickLine={false}
-              axisLine={false}
-              tickCount={5}
-            />
-            <YAxis
-              yAxisId="t"
+              type="number"
+              xAxisId="t"
               domain={[0,12]}
+              orientation="top"
               tick={axisStyle}
               tickLine={false}
               axisLine={false}
             />
-            <YAxis
-              yAxisId="m"
-              orientation="right"
+            <XAxis
+              type="number"
+              xAxisId="m"
+              orientation="bottom"
               domain={[1.0,1.4]}
               tick={axisStyle}
               tickLine={false}
               axisLine={false}
             />
+            <YAxis
+              type="number"
+              dataKey="depth"
+              yAxisId="depth"
+              domain={['dataMin - 10', 'dataMax + 10']}
+              reversed={true}
+              tick={axisStyle}
+              tickLine={false}
+              axisLine={false}
+              width={60}
+            />
             <Tooltip content={<ChartTooltip/>}/>
             {spikeDepth && (
               <ReferenceLine
-                yAxisId="t" x={Math.round(spikeDepth)}
+                yAxisId="depth" y={Math.round(spikeDepth)}
                 stroke="var(--risk-high)"
                 strokeDasharray="4 3"
                 label={{value:'anomaly',fill:'var(--risk-high)',fontSize:10,fontFamily:'var(--font-mono)',position:'insideTopRight'}}
               />
             )}
-            <Line yAxisId="t" type="monotone" dataKey="torque" stroke="var(--chart-torque)" strokeWidth={1.5} dot={false} isAnimationActive={false} name="Torque"/>
-            <Line yAxisId="m" type="monotone" dataKey="mud"    stroke="var(--chart-mud)"   strokeWidth={1.5} dot={false} isAnimationActive={false} name="Mud wt"/>
+            
+            {/* Historical events markers */}
+            {MOCK_INCIDENTS.map(inc => (
+              <ReferenceLine
+                key={inc.incident_id}
+                yAxisId="depth"
+                y={inc.depth_m}
+                stroke="#d97706"
+                strokeOpacity={0.6}
+                strokeDasharray="2 2"
+                label={{ value: `${inc.well_id} ${inc.incident_type}`, fill:'#d97706', fontSize:9, position:'insideTopLeft' }}
+              />
+            ))}
+
+            <Line xAxisId="t" yAxisId="depth" type="monotone" dataKey="torque" stroke="var(--chart-torque)" strokeWidth={1.5} dot={false} isAnimationActive={false} name="Torque"/>
+            <Line xAxisId="m" yAxisId="depth" type="monotone" dataKey="mud"    stroke="var(--chart-mud)"   strokeWidth={1.5} dot={false} isAnimationActive={false} name="Mud wt"/>
           </LineChart>
         </ResponsiveContainer>
       </div>

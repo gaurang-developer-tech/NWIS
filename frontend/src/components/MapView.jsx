@@ -25,7 +25,7 @@ const FIELD_BOUNDARY = [
   [28.55, 72.85], [28.45, 73.55], [27.85, 73.65], [27.75, 72.95], [28.15, 72.75]
 ]
 
-export default function MapView({ wells, activeWell, onWellClick, mapLayers }) {
+export default function MapView({ wells, activeWell, onWellClick, mapLayers, radiusKm = 5 }) {
   const riskStyle = (level) => RISK_STYLES[level] ?? RISK_STYLES.low
 
   return (
@@ -53,7 +53,7 @@ export default function MapView({ wells, activeWell, onWellClick, mapLayers }) {
       {mapLayers.radius && (
         <Circle
           center={DRILL_LOC}
-          radius={30000}
+          radius={radiusKm * 1000}
           pathOptions={{
             color:'#1e3a5f', weight:1,
             dashArray:'8 5', fillOpacity:0.03
@@ -117,7 +117,7 @@ export default function MapView({ wells, activeWell, onWellClick, mapLayers }) {
 
     {/* HUD Overlays */}
     <div className="map-info-chip" style={{top:10,left:12,fontSize:10}}>
-      Bikaner-Nagaur basin &nbsp;·&nbsp; 8 wells &nbsp;·&nbsp; 30 km radius
+      Bikaner-Nagaur basin &nbsp;·&nbsp; {wells.length} wells &nbsp;·&nbsp; {radiusKm} km radius
     </div>
 
       <div className="map-legend-chip" style={{bottom:10,right:10}}>

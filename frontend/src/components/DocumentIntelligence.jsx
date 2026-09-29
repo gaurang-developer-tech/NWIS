@@ -11,7 +11,7 @@ export default function DocumentIntelligence() {
   const [selectedDoc, setSelectedDoc] = useState(INITIAL_DOCS[0])
   const fileInputRef = useRef(null)
 
-  const handleUpload = (e) => {
+  const handleUpload = async (e) => {
     const file = e.target.files[0]
     if (!file) return
     
@@ -21,21 +21,48 @@ export default function DocumentIntelligence() {
       return
     }
 
+    const preview = URL.createObjectURL(file)
     const newDoc = {
       id: file.name,
       type: 'Uploaded Document',
       date: new Date().toISOString().split('T')[0],
-      well: 'OIL-001 (Active)',
-      status: 'Uploaded',
-      preview: URL.createObjectURL(file),
-      extracted: true,
+      well: 'Processing...',
+      status: 'Uploading...',
+      preview,
+      extracted: false,
       size: (file.size / 1024).toFixed(1) + ' KB',
-      isUserUploaded: true
+      isUserUploaded: true,
+      extractedData: null
     }
     
-    setDocs([newDoc, ...docs])
+    setDocs(prev => [newDoc, ...prev])
     setSelectedDoc(newDoc)
     e.target.value = ''
+
+    const formData = new FormData()
+    formData.append('file', file)
+    try {
+      const res = await fetch('http://localhost:8000/api/extract-wcr', { method: 'POST', body: formData })
+      const data = await res.json()
+      
+      const updatedDoc = {
+        ...newDoc,
+        well: data.well_id,
+        status: 'Processed',
+        extracted: true,
+        extractedData: data.extracted_data
+      }
+      setDocs(prev => prev.map(d => d.id === file.name ? updatedDoc : d))
+      setSelectedDoc(updatedDoc)
+    } catch (err) {
+      console.error(err)
+      const errDoc = {
+        ...newDoc,
+        status: 'Failed',
+      }
+      setDocs(prev => prev.map(d => d.id === file.name ? errDoc : d))
+      setSelectedDoc(errDoc)
+    }
   }
 
   const handleRemove = (id) => {
@@ -157,14 +184,21 @@ export default function DocumentIntelligence() {
                 <h3 style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)', marginBottom: 16, textTransform: 'uppercase' }}>Extracted Record — Demo</h3>
                 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                  {[
+                  {(selectedDoc.extractedData ? [
+                    ['Event type', selectedDoc.extractedData['Event Type'], '#fecaca', '#991b1b'],
+                    ['Depth', selectedDoc.extractedData['Depth'], '#fef08a', '#854d0e'],
+                    ['Formation', selectedDoc.extractedData['Formation'], '#fef08a', '#854d0e'],
+                    ['Severity', selectedDoc.extractedData['Severity'], '#fee2e2', '#dc2626'],
+                    ['Cause', selectedDoc.extractedData['Cause'], '#bfdbfe', '#1e3a8a'],
+                    ['Mitigation', selectedDoc.extractedData['Mitigation'], '#bbf7d0', '#166534']
+                  ] : [
                     ['Event type', 'Stuck Pipe', '#fecaca', '#991b1b'],
                     ['Depth', '1,148 m', '#fef08a', '#854d0e'],
                     ['Formation', 'Jodhpur Sandstone', '#fef08a', '#854d0e'],
                     ['Severity', 'High', '#fee2e2', '#dc2626'],
                     ['Cause', 'Differential Pressure', '#bfdbfe', '#1e3a8a'],
                     ['Mitigation', 'Increase mud weight to 1.25 SG', '#bbf7d0', '#166534']
-                  ].map(([label, val, bg, fg]) => (
+                  ]).map(([label, val, bg, fg]) => (
                     <div key={label} style={{ display: 'grid', gridTemplateColumns: '120px 1fr', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: 8 }}>
                       <div style={{ fontSize: 11, color: 'var(--text-3)', fontWeight: 600, textTransform: 'uppercase' }}>{label}</div>
                       <div>

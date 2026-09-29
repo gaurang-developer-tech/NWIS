@@ -11,7 +11,7 @@ const calcDist = (lat1, lon1, lat2, lon2) => {
 
 export default function NearbyWells({ activeDepth, onNavigate, initialWell, mapLayers }) {
   const [selectedWell, setSelectedWell] = useState(initialWell || null)
-  const [radius, setRadius] = useState(30)
+  const [radius, setRadius] = useState(5)
   const activeWell = MOCK_WELLS[0]
 
   const nearbyWells = useMemo(() => {
@@ -32,7 +32,7 @@ export default function NearbyWells({ activeDepth, onNavigate, initialWell, mapL
         </div>
         <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
           <div style={{ fontSize: 11, color: 'var(--text-3)', padding: '6px 10px' }}>Radius</div>
-          {[10, 20, 30, 50].map(r => (
+          {[1, 5, 10, 20, 30].map(r => (
             <button 
               key={r} onClick={() => setRadius(r)}
               style={{ padding: '6px 14px', fontSize: 11, borderRadius: 16, cursor: 'pointer', background: radius === r ? 'var(--info)' : 'var(--surface)', color: radius === r ? '#fff' : 'var(--text-2)', border: `1px solid ${radius === r ? 'var(--info)' : 'var(--border)'}`, fontWeight: 600 }}
@@ -46,7 +46,7 @@ export default function NearbyWells({ activeDepth, onNavigate, initialWell, mapL
       <div style={{ display: 'flex', gap: 20, flex: 1, minHeight: 0 }}>
         {/* Map Section */}
         <div style={{ flex: 1, border: '1px solid var(--border)', borderRadius: 6, overflow: 'hidden', position: 'relative' }}>
-          <MapView wells={[activeWell, ...nearbyWells]} activeWell={selectedWell} onWellClick={setSelectedWell} activeDepth={activeDepth} mapLayers={mapLayers} />
+          <MapView wells={[activeWell, ...nearbyWells]} activeWell={selectedWell} onWellClick={setSelectedWell} activeDepth={activeDepth} mapLayers={mapLayers} radiusKm={radius} />
         </div>
 
         {/* Data Panel */}

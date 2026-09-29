@@ -168,10 +168,13 @@ export default function App() {
       {/* LEFT RAIL */}
       <aside className="rail">
         <div className="rail-header">
-          <div className="product-wordmark">
-            <div style={{fontWeight: 700, color: 'var(--text)', letterSpacing: '-0.2px'}}>NWIS INTELLIGENCE LAYER</div>
-            <div style={{fontSize: 10, color: 'var(--text-3)', fontWeight: 500, marginTop: 4, textTransform: 'uppercase', letterSpacing: '0.5px'}}>
-              eRTMAC Companion <span style={{opacity:0.5}}>·</span> Prototype Stream
+          <div className="product-wordmark" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <img src="/iocl-logo.svg" alt="Indian Oil Logo" style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
+            <div>
+              <div style={{fontWeight: 700, color: 'var(--iocl-saffron)', letterSpacing: '-0.2px', fontSize: '14px'}}>INDIAN OIL LIMITED</div>
+              <div style={{fontSize: 10, color: '#8faac8', fontWeight: 500, marginTop: 4, textTransform: 'uppercase', letterSpacing: '0.5px'}}>
+                NWIS eRTMAC <span style={{opacity:0.5}}>·</span> Prototype
+              </div>
             </div>
           </div>
           <div className="well-identity">
