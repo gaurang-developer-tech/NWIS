@@ -58,7 +58,7 @@ def wells_within_radius(
 #  GEOLOGICAL FILTER  (core of /api/incidents/by-depth)
 # ═══════════════════════════════════════════════════════════════════════════════
 
-DEPTH_TOLERANCE_M = 80
+DEPTH_TOLERANCE_M = 50
 
 
 def filter_incidents_by_depth(

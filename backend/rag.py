@@ -7,9 +7,10 @@ Loads incidents.json once on import and exposes:
 """
 
 import re
+import random
 import os
 import json
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Any, Tuple, Optional
 
 # ── Load data once at import time ─────────────────────────────────────────────
 _DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
@@ -100,9 +101,9 @@ def _parse_question(question: str) -> Dict[str, Any]:
 def _score_incident(
     inc: Dict[str, Any],
     depths: List[int],
-    formation: str | None,
-    incident_type: str | None,
-    fault_block: str | None,
+    formation: Optional[str],
+    incident_type: Optional[str],
+    fault_block: Optional[str],
 ) -> Tuple[float, Dict[str, Any]]:
     """
     Score an incident (higher = better match). Returns (score, incident).
@@ -239,3 +240,26 @@ def format_answer(question: str, matched: List[Dict[str, Any]]) -> str:
             )
 
     return "\n".join(lines)
+
+
+def extract_wcr_document(filename: str, content: bytes) -> Dict[str, Any]:
+    """Mock AI/NLP extraction of a PDF document."""
+    formations = ["Jodhpur Sandstone", "Bilara Limestone", "Nagaur Sandstone"]
+    incident_types = ["Stuck Pipe", "Mud Loss", "Kick", "Overpressure Zone"]
+    
+    # Try to parse well name from filename
+    well_match = re.search(r'(Well|OIL|WCR)[-_]?(\d+)', filename, re.IGNORECASE)
+    well_id = f"OIL-{well_match.group(2).zfill(3)}" if well_match else "OIL-UNKNOWN"
+    
+    return {
+        "filename": filename,
+        "well_id": well_id,
+        "extracted_data": {
+            "Event Type": random.choice(incident_types),
+            "Depth": f"{random.randint(900, 1400)} m",
+            "Mitigation": "Circulated bottoms up. Adjusted mud weight to 1.25 SG and applied overpull.",
+            "Formation": random.choice(formations),
+            "Severity": "High",
+            "Cause": "Simulated NLP extraction cause"
+        }
+    }

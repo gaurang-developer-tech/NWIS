@@ -63,7 +63,7 @@ _ALERT_MESSAGE = (
 
 _STREAM_INTERVAL_S     = 0.4    # 400 ms between rows
 _DEPTH_TRIGGER_DEPTH   = 1100.0 # m — threshold where proactive check runs
-_DEPTH_PROXIMITY_M     = 100    # ±100 m search window for historical incidents
+_DEPTH_PROXIMITY_M     = 50    # ±50 m search window for historical incidents
 _PROACTIVE_MIN_MATCHES = 2      # minimum matching incidents to fire trigger
 
 _ADWIN_WINDOW_SIZE   = 20       # total sliding window length
@@ -213,6 +213,19 @@ async def telemetry_event_generator() -> AsyncGenerator[str, None]:
                     payload["proactive_message"] = _build_proactive_message(
                         depth_m, matches
                     )
+                    
+                    # Added for Phase 2 Requirements:
+                    best = matches[0]
+                    type_counts = Counter(i["incident_type"] for i in matches)
+                    top_type = max(type_counts, key=lambda t: type_counts[t])
+                    prob = min(99, 45 + (len(matches) * 15))
+                    
+                    payload["risk_type"] = top_type
+                    payload["probability"] = f"{prob}%"
+                    payload["offset_well_name"] = best["well_id"]
+                    payload["historical_mitigation"] = best["mitigation"]
+                    payload["historical_document"] = best.get("document_source", "Unknown")
+                    
                     payload["historical_wells"] = list(
                         dict.fromkeys(m["well_id"] for m in matches)   # ordered unique
                     )

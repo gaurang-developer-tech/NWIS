@@ -30,7 +30,7 @@ type_counts = Counter(i['incident_type'] for i in incs)
 stuck  = [i for i in incs if i['incident_type'] == 'stuck_pipe']
 losses = [i for i in incs if i['incident_type'] == 'mud_loss']
 kicks  = [i for i in incs if i['incident_type'] == 'kick']
-torqs  = [i for i in incs if i['incident_type'] == 'torque_spike']
+overp  = [i for i in incs if i['incident_type'] == 'overpressure_zone']
 
 print()
 print('=' * 52)
@@ -43,12 +43,12 @@ for t, c in sorted(type_counts.items()):
 stuck_depths = [i['depth_m'] for i in stuck]
 loss_depths  = [i['depth_m'] for i in losses]
 kick_depths  = [i['depth_m'] for i in kicks]
-torq_depths  = [i['depth_m'] for i in torqs]
+overp_depths = [i['depth_m'] for i in overp]
 
 print('  stuck_pipe depth  :', min(stuck_depths), '-', max(stuck_depths), 'm  (expected 1100-1200)')
 print('  mud_loss depth    :', min(loss_depths),  '-', max(loss_depths),  'm  (expected 900-1050)')
 print('  kick depth        :', min(kick_depths),  '-', max(kick_depths),  'm  (expected 1200-1300)')
-print('  torque_spike depth:', min(torq_depths),  '-', max(torq_depths),  'm  (expected 1100-1200)')
+print('  overpressure depth:', min(overp_depths), '-', max(overp_depths), 'm  (expected 1100-1200)')
 
 # ── Validate telemetry.csv ────────────────────────────────────────────
 with open('data/telemetry.csv') as f:

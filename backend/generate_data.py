@@ -525,44 +525,42 @@ INCIDENTS_RAW = [
         ),
         "date": "2022-08-15",
     },
-    # ── torque_spike (2 incidents, 1100-1200m, Jodhpur Sandstone) ────────────
+    # ── overpressure_zone (2 incidents, 1100-1200m, Jodhpur Sandstone) ────────────
     {
         "incident_id": "INC-007",
         "well_id": "OIL-004",
-        "incident_type": "torque_spike",
+        "incident_type": "overpressure_zone",
         "depth_m": 1185,
         "formation": "Jodhpur Sandstone",
         "fault_block": "FB-A",
         "mud_weight_sg": 1.18,
         "torque_knm": 12.3,
         "description": (
-            "Severe torque spike to 12.3 kNm recorded at 1185m, exceeding tool joint "
-            "make-up torque limit. Bit balling suspected due to water-sensitive shale "
-            "layers. String experienced stick-slip oscillation."
+            "Unexpected high pressure zone encountered at 1185m. Signs of overpressure "
+            "detected via connection gas peaks and d-exponent reversal."
         ),
         "mitigation": (
-            "Reduce WOB to 8 tonnes. Increase RPM to 120. Pump glycol-based shale "
-            "inhibitor. If stick-slip persists, pull out of hole for bit inspection."
+            "Increase mud weight proactively. Circulate bottoms up. Monitor gas levels "
+            "and flow rates closely before continuing drilling."
         ),
         "date": "2020-09-05",
     },
     {
         "incident_id": "INC-016",
         "well_id": "OIL-007",
-        "incident_type": "torque_spike",
+        "incident_type": "overpressure_zone",
         "depth_m": 1195,
         "formation": "Jodhpur Sandstone",
         "fault_block": "FB-C",
         "mud_weight_sg": 1.17,
         "torque_knm": 11.8,
         "description": (
-            "Sustained torque spike to 11.8 kNm at 1195m with visible oscillation on "
-            "surface torque gauge. Downhole tool data confirmed stick-slip index of 0.87. "
-            "Bit bounce also observed on downhole accelerometer."
+            "Overpressure zone transition identified at 1195m. Sudden increase in ROP "
+            "and background gas. Wellbore stability issues initiated."
         ),
         "mitigation": (
-            "Apply stick-slip mitigation parameters: increase RPM to 140, reduce WOB to "
-            "6 tonnes. Inject friction reducer into mud system. Monitor with MPD choke."
+            "Control drill the transition zone. Adjust mud weight to manage pore pressure. "
+            "Ensure MPD system is fully operational and choke is adjusted."
         ),
         "date": "2022-01-19",
     },
@@ -570,6 +568,10 @@ INCIDENTS_RAW = [
 
 
 def generate_incidents():
+    for inc in INCIDENTS_RAW:
+        well_num = inc["well_id"].split("-")[1]
+        inc["document_source"] = f"WCR-Well-{well_num}.pdf"
+        
     with open(INCIDENTS_PATH, "w") as f:
         json.dump(INCIDENTS_RAW, f, indent=2)
     print(f"  [incidents.json] {len(INCIDENTS_RAW)} incidents written.")

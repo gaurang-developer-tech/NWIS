@@ -17,8 +17,9 @@ from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
+from fastapi import UploadFile, File
 
-from rag import search_incidents, format_answer
+from rag import search_incidents, format_answer, extract_wcr_document
 from search import (
     compute_risk_level,
     filter_incidents_by_depth,
@@ -313,7 +314,7 @@ def post_risk_score(body: RiskScoreRequest) -> Dict[str, Any]:
     score      = 0
     top_factors: List[str] = []
 
-    density_pts = len(matching) * 15
+    density_pts = len(matching) * 5
     if density_pts > 0:
         score += density_pts
         top_factors.append(
@@ -322,34 +323,34 @@ def post_risk_score(body: RiskScoreRequest) -> Dict[str, Any]:
         )
 
     # ── 2. Mud weight risk ────────────────────────────────────────────────────
-    if body.mud_weight_sg < 1.18:
-        score += 25
+    if body.mud_weight_sg < 1.12:
+        score += 15
         top_factors.append(
-            f"Mud weight below safe threshold: {body.mud_weight_sg:.3f} SG < 1.18 SG (+25 pts)"
+            f"Mud weight below safe threshold: {body.mud_weight_sg:.3f} SG < 1.12 SG (+15 pts)"
         )
-    if body.mud_weight_sg < 1.15:
-        score += 25
+    if body.mud_weight_sg < 1.08:
+        score += 15
         top_factors.append(
-            f"Mud weight critically low: {body.mud_weight_sg:.3f} SG < 1.15 SG (+25 pts)"
+            f"Mud weight critically low: {body.mud_weight_sg:.3f} SG < 1.08 SG (+15 pts)"
         )
 
     # ── 3. Torque risk ────────────────────────────────────────────────────────
-    if body.torque_knm > 7.0:
+    if body.torque_knm > 8.5:
+        score += 15
+        top_factors.append(
+            f"Elevated torque: {body.torque_knm:.2f} kNm > 8.5 kNm (+15 pts)"
+        )
+    if body.torque_knm > 10.0:
         score += 20
         top_factors.append(
-            f"Elevated torque: {body.torque_knm:.2f} kNm > 7.0 kNm (+20 pts)"
-        )
-    if body.torque_knm > 8.5:
-        score += 30
-        top_factors.append(
-            f"High torque anomaly: {body.torque_knm:.2f} kNm > 8.5 kNm (+30 pts)"
+            f"High torque anomaly: {body.torque_knm:.2f} kNm > 10.0 kNm (+20 pts)"
         )
 
     # ── 4. Depth danger zone ──────────────────────────────────────────────────
     if 1100 <= body.depth_m <= 1200:
-        score += 20
+        score += 5
         top_factors.append(
-            f"Depth in known danger zone: {body.depth_m:.0f} m (1100–1200 m Jodhpur Sandstone, +20 pts)"
+            f"Depth in known danger zone: {body.depth_m:.0f} m (1100–1200 m Jodhpur Sandstone, +5 pts)"
         )
 
     # ── Cap and classify ──────────────────────────────────────────────────────
@@ -406,6 +407,17 @@ def post_risk_score(body: RiskScoreRequest) -> Dict[str, Any]:
         "recommendation":     _recommendations[risk_level],
         "matching_count":     len(matching),
     }
+
+
+# ── POST /api/extract-wcr ─────────────────────────────────────────────────────
+@app.post("/api/extract-wcr", tags=["Intelligence"])
+async def post_extract_wcr(file: UploadFile = File(...)) -> Dict[str, Any]:
+    """
+    Simulate AI/NLP extraction from uploaded Well Completion Reports (WCRs).
+    Reads a PDF, extracts text (simulated), and maps events to structured JSON.
+    """
+    content = await file.read()
+    return extract_wcr_document(file.filename, content)
 
 
 # ── GET /api/stream/telemetry ─────────────────────────────────────────────────
